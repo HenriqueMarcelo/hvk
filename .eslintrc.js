@@ -38,6 +38,8 @@ module.exports = {
         extensions: ['.tsx'],
       },
     ],
+    'import/no-duplicates': 'off',
+    'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',
