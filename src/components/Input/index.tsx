@@ -85,7 +85,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
     <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
       <IconComponent
         {...iconProps}
-        style={{marginRight: 16}}
+        style={{marginRight: 16, width: 20}}
         size={20}
         color={isFocused || isFilled ? colors.primary : colors.secondary}
       />

@@ -35,7 +35,7 @@ export const Container = styled.View<ContainerProps>`
 export const pickerStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 18,
-    paddingHorizontal: 0,
+    paddingHorizontal: 4,
     paddingVertical: 8,
     // borderWidth: 0.5,
     borderColor: 'purple',
@@ -46,7 +46,7 @@ export const pickerStyles = StyleSheet.create({
   },
   inputAndroid: {
     fontSize: 18,
-    paddingHorizontal: 0,
+    paddingHorizontal: 4,
     paddingVertical: 8,
     // borderWidth: 0.5,
     borderColor: 'purple',

@@ -1,6 +1,6 @@
 import {FormHandles} from '@unform/core';
 import {Form} from '@unform/mobile';
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {Button, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';

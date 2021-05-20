@@ -11,20 +11,20 @@ import {colors} from '../../styles/colors';
 
 interface Props extends Omit<PickerSelectProps, 'onValueChange'> {
   name: string;
-  containerStyle: Record<string, unknown>;
+  containerStyle?: Record<string, unknown>;
   icon: ElementType;
   iconProps: IconProps;
   placeholder: string;
 }
 
-const PickerSelect: ElementType = ({
+const PickerSelect: React.FC<Props> = ({
   name,
   icon,
   iconProps,
   containerStyle = {},
   placeholder,
   items,
-}: Props) => {
+}) => {
   const pickerRef = useRef(null);
   const {fieldName, registerField, defaultValue = '', error} = useField(name);
   const [selectedValue, setSelectedValue] = useState(defaultValue);
@@ -50,24 +50,24 @@ const PickerSelect: ElementType = ({
     <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
       <IconComponent
         {...iconProps}
-        style={{marginRight: 16}}
+        style={{marginRight: 16, width: 20}}
         size={20}
         color={isFocused || selectedValue ? colors.primary : colors.secondary}
       />
 
       <Picker
-        onOpen={() => setIsFocused(true)}
-        onClose={() => setIsFocused(false)}
-        useNativeAndroidPickerStyle={false}
         ref={pickerRef}
-        value={selectedValue}
-        onValueChange={setSelectedValue}
-        items={items}
-        style={pickerStyles}
         placeholder={{
           label: placeholder,
           color: colors.secondary,
         }}
+        value={selectedValue}
+        onValueChange={setSelectedValue}
+        onOpen={() => setIsFocused(true)}
+        onClose={() => setIsFocused(false)}
+        useNativeAndroidPickerStyle={false}
+        items={items}
+        style={pickerStyles}
       />
     </Container>
   );
