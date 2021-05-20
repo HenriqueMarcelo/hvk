@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from './pages/Home';
 import {colors} from './styles/colors';
+import Create from './pages/Create';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,20 @@ const App: React.FC = () => (
         component={Home}
         options={{
           title: 'HVK',
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTitleStyle: {
+            fontFamily: 'ShareTechMono-Regular',
+          },
+          headerTintColor: colors.light,
+        }}
+      />
+      <Stack.Screen
+        name="Create"
+        component={Create}
+        options={{
+          title: 'Abastecimento',
           headerStyle: {
             backgroundColor: colors.primary,
           },

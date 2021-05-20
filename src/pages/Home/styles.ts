@@ -1,12 +1,6 @@
 import styled from 'styled-components/native';
 import {colors} from '../../styles/colors';
 
-export const Container = styled.ScrollView`
-  background-color: ${colors.light};
-  padding-top: 18px;
-  flex: 1;
-`;
-
 export const Box = styled.View`
   background-color: ${colors.white};
   border-color: ${colors.secondary};
