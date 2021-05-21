@@ -14,3 +14,16 @@ export const SubmitButtonText = styled.Text`
   color: ${colors.white};
   font-family: 'ShareTechMono-Regular';
 `;
+
+export const SwitchView = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+export const SwitchText = styled.Text`
+  font-size: 18px;
+  color: ${colors.dark};
+  font-family: 'ShareTechMono-Regular';
+`;

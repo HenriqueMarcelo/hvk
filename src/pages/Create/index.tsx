@@ -1,13 +1,16 @@
 import {FormHandles} from '@unform/core';
 import {Form} from '@unform/mobile';
-import React, {useCallback, useRef} from 'react';
-import {Button, TextInput} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {Switch, TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import * as Yup from 'yup';
 import Container from '../../components/Container';
 import Input from '../../components/Input';
+import InputSwitch from '../../components/InputSwitch';
 import PickerSelect from '../../components/PickerSelect';
-import {SubmitButton, SubmitButtonText} from './styles';
+import {colors} from '../../styles/colors';
+import {SubmitButton, SubmitButtonText, SwitchText, SwitchView} from './styles';
 
 const fuels = [
   {label: 'Gasolina Comum', value: 'common_gasoline', key: 1},
@@ -26,6 +29,32 @@ const brands = [
   {label: 'Outro', value: 'other', key: 5},
 ];
 
+interface Errors {
+  [key: string]: string;
+}
+
+interface CheckboxOption {
+  id: string;
+  value: string;
+  label: string;
+}
+
+export const getValidationErrors = (err: Yup.ValidationError): Errors => {
+  const validationErrors: Errors = {};
+
+  err.inner.forEach(error => {
+    if (error.path) {
+      validationErrors[error.path] = error.message;
+    }
+  });
+
+  return validationErrors;
+};
+
+const checkboxOptions: CheckboxOption[] = [
+  {id: 'is_active', value: 'is_active', label: 'Ativo'},
+];
+
 const Create: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const odometerInputRef = useRef<TextInput>(null);
@@ -33,8 +62,54 @@ const Create: React.FC = () => {
   const costInputRef = useRef<TextInput>(null);
   const priceInputRef = useRef<TextInput>(null);
 
-  const handleSubmit = useCallback(data => {
-    console.log(data);
+  const [fullTank, setFullTank] = useState(false);
+
+  const handleSubmit = useCallback(async data => {
+    try {
+      const shape: any = {
+        fuel: Yup.string().required('Informe o combustível'),
+        odometer: Yup.string().required('Informe o valor do hodômetro'),
+      };
+      if (
+        !(
+          (data.quantity && data.cost) ||
+          (data.quantity && data.price) ||
+          (data.cost && data.price)
+        )
+      ) {
+        if (!data.quantity) {
+          shape.quantity = Yup.string().required(
+            'Informe a quantidade abastecida',
+          );
+        } else {
+          shape.quantity = Yup.number().typeError(
+            'O valor informado não é um número',
+          );
+        }
+        if (!data.cost) {
+          shape.cost = Yup.string().required('Informe o valor total');
+        } else {
+          shape.cost = Yup.number().typeError(
+            'O valor informado não é um número',
+          );
+        }
+        if (!data.price) {
+          shape.price = Yup.string().required('Informe o preço por litro');
+        } else {
+          shape.price = Yup.number().typeError(
+            'O valor informado não é um número',
+          );
+        }
+      }
+      const schema = Yup.object().shape(shape);
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        formRef.current?.setErrors(getValidationErrors(err));
+      }
+    }
   }, []);
 
   const handleClick = useCallback(() => {
@@ -56,6 +131,7 @@ const Create: React.FC = () => {
             name: 'gas-pump',
           }}
         />
+
         <PickerSelect
           placeholder="Bandeira"
           name="brand"
@@ -78,6 +154,19 @@ const Create: React.FC = () => {
             odometerInputRef.current?.focus();
           }}
         />
+        <SwitchView>
+          <SwitchText>Tanque cheio: </SwitchText>
+          <Switch
+            style={{transform: [{scaleX: 1.5}, {scaleY: 1.5}]}}
+            trackColor={{false: colors.secondary, true: colors.secondary}}
+            thumbColor={fullTank ? colors.primary : colors.white}
+            ios_backgroundColor={colors.primary}
+            onValueChange={() => {
+              setFullTank(!fullTank);
+            }}
+            value={fullTank}
+          />
+        </SwitchView>
         <Input
           placeholder="Hodômetro Total"
           name="odometer"

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {IconProps} from 'react-native-vector-icons/Icon';
 import {pickerStyles} from './styles';
 import {colors} from '../../styles/colors';
-import {Container, iconStyles} from '../Input/styles';
+import {Container, ErrorMessage, iconStyles} from '../Input/styles';
 
 export interface PickerPropsFix extends PickerProps {
   onFocus: () => null;
@@ -65,45 +65,51 @@ const PickerSelect: React.FC<Props> = ({
   }, [selectedValue]);
 
   return (
-    <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
-      <IconComponent
-        {...iconProps}
-        style={iconStyles.icon}
-        size={20}
-        color={isFocused || selectedValue ? colors.primary : colors.secondary}
-      />
-
-      <Picker
-        // ref={pickerRef}
-        style={pickerStyles.picker}
-        selectedValue={selectedValue}
-        onValueChange={itemValue => {
-          setSelectedValue(itemValue);
-        }}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}>
-        <Picker.Item
-          label={placeholder}
-          style={
-            selectedValue
-              ? pickerStyles.placeholder
-              : pickerStyles.placeholderSelected
-          }
+    <>
+      <Container
+        style={containerStyle}
+        isFocused={isFocused}
+        isErrored={!!error}>
+        <IconComponent
+          {...iconProps}
+          style={iconStyles.icon}
+          size={20}
+          color={isFocused || selectedValue ? colors.primary : colors.secondary}
         />
-        {items.map((item: ItemProps) => (
+
+        <Picker
+          // ref={pickerRef}
+          style={pickerStyles.picker}
+          selectedValue={selectedValue}
+          onValueChange={itemValue => {
+            setSelectedValue(itemValue);
+          }}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}>
           <Picker.Item
-            label={item.label}
-            value={item.value}
-            key={item.key}
+            label={placeholder}
             style={
-              selectedValue === item.value
-                ? pickerStyles.optionSelected
-                : pickerStyles.option
+              selectedValue
+                ? pickerStyles.placeholder
+                : pickerStyles.placeholderSelected
             }
           />
-        ))}
-      </Picker>
-    </Container>
+          {items.map((item: ItemProps) => (
+            <Picker.Item
+              label={item.label}
+              value={item.value}
+              key={item.key}
+              style={
+                selectedValue === item.value
+                  ? pickerStyles.optionSelected
+                  : pickerStyles.option
+              }
+            />
+          ))}
+        </Picker>
+      </Container>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </>
   );
 };
 

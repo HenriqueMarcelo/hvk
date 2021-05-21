@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
@@ -13,7 +14,14 @@ import {useField} from '@unform/core';
 import Icon from 'react-native-vector-icons/Feather';
 import {IconProps} from 'react-native-vector-icons/Icon';
 import {ElementType} from 'react';
-import {Container, iconStyles, Sufix, SufixText, TextInput} from './styles';
+import {
+  Container,
+  ErrorMessage,
+  iconStyles,
+  Sufix,
+  SufixText,
+  TextInput,
+} from './styles';
 import {colors} from '../../styles/colors';
 
 interface InputProps extends TextInputProps {
@@ -83,32 +91,44 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
-      <IconComponent
-        {...iconProps}
-        style={iconStyles.icon}
-        size={20}
-        color={isFocused || isFilled ? colors.primary : colors.secondary}
-      />
+    <>
+      <Container
+        style={containerStyle}
+        isFocused={isFocused}
+        isErrored={!!error}>
+        <IconComponent
+          {...iconProps}
+          style={iconStyles.icon}
+          size={20}
+          color={
+            isFocused || isFilled
+              ? colors.primary
+              : error
+              ? colors.danger
+              : colors.secondary
+          }
+        />
 
-      <TextInput
-        ref={inputElementRef}
-        placeholderTextColor={colors.secondary}
-        defaultValue={defaultValue}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        onChangeText={value => {
-          inputValueRef.current.value = value;
-        }}
-        {...rest}
-      />
+        <TextInput
+          ref={inputElementRef}
+          placeholderTextColor={colors.secondary}
+          defaultValue={defaultValue}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onChangeText={value => {
+            inputValueRef.current.value = value;
+          }}
+          {...rest}
+        />
 
-      {sufix && (
-        <Sufix>
-          <SufixText>{sufix}</SufixText>
-        </Sufix>
-      )}
-    </Container>
+        {sufix && (
+          <Sufix>
+            <SufixText>{sufix}</SufixText>
+          </Sufix>
+        )}
+      </Container>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </>
   );
 };
 

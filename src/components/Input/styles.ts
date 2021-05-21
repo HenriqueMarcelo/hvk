@@ -54,6 +54,15 @@ export const SufixText = styled.Text`
   font-family: 'ShareTechMono-Regular';
 `;
 
+export const ErrorMessage = styled.Text`
+  font-size: 14px;
+  margin-bottom: 16px;
+  margin-top: -10px;
+  color: ${colors.danger};
+  font-family: 'ShareTechMono-Regular';
+  opacity: 0.9;
+`;
+
 export const iconStyles = StyleSheet.create({
   icon: {marginRight: 16, width: 22},
 });
