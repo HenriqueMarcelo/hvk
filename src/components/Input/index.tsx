@@ -13,7 +13,7 @@ import {useField} from '@unform/core';
 import Icon from 'react-native-vector-icons/Feather';
 import {IconProps} from 'react-native-vector-icons/Icon';
 import {ElementType} from 'react';
-import {Container, TextInput} from './styles';
+import {Container, iconStyles, Sufix, SufixText, TextInput} from './styles';
 import {colors} from '../../styles/colors';
 
 interface InputProps extends TextInputProps {
@@ -21,6 +21,7 @@ interface InputProps extends TextInputProps {
   containerStyle?: Record<string, unknown>;
   icon: ElementType;
   iconProps: IconProps;
+  sufix?: string;
 }
 
 interface InputValueReference {
@@ -32,7 +33,7 @@ interface InputRef {
 }
 
 const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  {name, icon, iconProps, containerStyle = {}, ...rest},
+  {name, icon, iconProps, containerStyle = {}, sufix, ...rest},
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -85,7 +86,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
     <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
       <IconComponent
         {...iconProps}
-        style={{marginRight: 16, width: 20}}
+        style={iconStyles.icon}
         size={20}
         color={isFocused || isFilled ? colors.primary : colors.secondary}
       />
@@ -101,6 +102,12 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
         }}
         {...rest}
       />
+
+      {sufix && (
+        <Sufix>
+          <SufixText>{sufix}</SufixText>
+        </Sufix>
+      )}
     </Container>
   );
 };

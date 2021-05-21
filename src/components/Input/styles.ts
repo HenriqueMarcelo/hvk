@@ -1,3 +1,4 @@
+import {StyleSheet} from 'react-native';
 import styled, {css} from 'styled-components/native';
 import {colors} from '../../styles/colors';
 
@@ -12,12 +13,13 @@ export const Container = styled.View<ContainerProps>`
   padding: 0 16px;
   background: ${colors.white};
   border-radius: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   border-width: 2px;
   border-color: ${colors.white};
   flex-direction: row;
   align-items: center;
   border-color: ${colors.secondary};
+  overflow: hidden;
   ${props =>
     props.isErrored &&
     css`
@@ -34,5 +36,24 @@ export const TextInput = styled.TextInput`
   flex: 1;
   color: ${colors.primary};
   font-size: 18px;
-  font-family: 'RobotoSlab-Regular';
+  font-family: 'ShareTechMono-Regular';
 `;
+
+export const Sufix = styled.View`
+  background: ${colors.secondary};
+  height: 100%;
+  justify-content: center;
+  padding: 0 16px;
+  right: 0;
+  position: absolute;
+`;
+
+export const SufixText = styled.Text`
+  font-size: 16px;
+  color: ${colors.dark};
+  font-family: 'ShareTechMono-Regular';
+`;
+
+export const iconStyles = StyleSheet.create({
+  icon: {marginRight: 16, width: 22},
+});
