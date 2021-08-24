@@ -7,26 +7,26 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import * as Yup from 'yup';
 import Container from '../../components/Container';
 import Input from '../../components/Input';
-import InputSwitch from '../../components/InputSwitch';
 import PickerSelect from '../../components/PickerSelect';
+import {realmRegister} from '../../services/RealmService';
 import {colors} from '../../styles/colors';
 import {SubmitButton, SubmitButtonText, SwitchText, SwitchView} from './styles';
 
-const fuels = [
-  {label: 'Gasolina Comum', value: 'common_gasoline', key: 1},
-  {label: 'Gasolina Adtivada', value: 'additive_gasoline', key: 2},
-  {label: 'Gasolina Premium', value: 'premium_gasoline', key: 3},
-  {label: 'Etanol', value: 'ethanol', key: 4},
-  {label: 'Etanol + Gasolina', value: 'ethanol_gasoline', key: 5},
-  {label: 'GNV', value: 'cng', key: 6},
-  {label: 'Disel', value: 'disel', key: 7},
+export const fuels = [
+  {label: 'Gasolina Comum', value: '1', key: 1},
+  {label: 'Gasolina Adtivada', value: '2', key: 2},
+  {label: 'Gasolina Premium', value: '3', key: 3},
+  {label: 'Etanol', value: '4', key: 4},
+  {label: 'Etanol + Gasolina', value: '5', key: 5},
+  {label: 'GNV', value: '6', key: 6},
+  {label: 'Disel', value: '7', key: 7},
 ];
 const brands = [
-  {label: 'Shell', value: 'shell', key: 1},
-  {label: 'Petrobras', value: 'petrobras', key: 2},
-  {label: 'Ipiranga', value: 'ipiranga', key: 3},
-  {label: 'Ale', value: 'ale', key: 4},
-  {label: 'Outro', value: 'other', key: 5},
+  {label: 'Shell', value: '1', key: 1},
+  {label: 'Petrobras', value: '2', key: 2},
+  {label: 'Ipiranga', value: '3', key: 3},
+  {label: 'Ale', value: '4', key: 4},
+  {label: 'Outro', value: '5', key: 5},
 ];
 
 interface Errors {
@@ -64,53 +64,86 @@ const Create: React.FC = () => {
 
   const [fullTank, setFullTank] = useState(false);
 
-  const handleSubmit = useCallback(async data => {
-    try {
-      const shape: any = {
-        fuel: Yup.string().required('Informe o combustível'),
-        odometer: Yup.string().required('Informe o valor do hodômetro'),
-      };
-      if (
-        !(
-          (data.quantity && data.cost) ||
-          (data.quantity && data.price) ||
-          (data.cost && data.price)
-        )
-      ) {
-        if (!data.quantity) {
-          shape.quantity = Yup.string().required(
-            'Informe a quantidade abastecida',
-          );
-        } else {
-          shape.quantity = Yup.number().typeError(
-            'O valor informado não é um número',
-          );
+  const handleSubmit = useCallback(
+    async data => {
+      try {
+        const shape: any = {
+          fuel: Yup.string().required('Informe o combustível'),
+          odometer: Yup.string().required('Informe o valor do hodômetro'),
+        };
+        if (
+          !(
+            (data.quantity && data.cost) ||
+            (data.quantity && data.price) ||
+            (data.cost && data.price)
+          )
+        ) {
+          if (!data.quantity) {
+            shape.quantity = Yup.string().required(
+              'Informe a quantidade abastecida',
+            );
+          } else {
+            shape.quantity = Yup.number().typeError(
+              'O valor informado não é um número',
+            );
+          }
+          if (!data.cost) {
+            shape.cost = Yup.string().required('Informe o valor total');
+          } else {
+            shape.cost = Yup.number().typeError(
+              'O valor informado não é um número',
+            );
+          }
+          if (!data.price) {
+            shape.price = Yup.string().required('Informe o preço por litro');
+          } else {
+            shape.price = Yup.number().typeError(
+              'O valor informado não é um número',
+            );
+          }
         }
-        if (!data.cost) {
-          shape.cost = Yup.string().required('Informe o valor total');
-        } else {
-          shape.cost = Yup.number().typeError(
-            'O valor informado não é um número',
-          );
+        const schema = Yup.object().shape(shape);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        const realm = await realmRegister;
+        let task1: any;
+        const calculateQuantity = data.quantity
+          ? data.quantity
+          : data.cost / data.price;
+        const calculatePrice = data.price
+          ? data.price
+          : data.cost / data.quantity;
+        const calculateCost = data.cost
+          ? data.cost
+          : data.price * data.quantity;
+        try {
+          realm.write(async () => {
+            const uniqueId = +new Date();
+            task1 = realm.create('Register', {
+              _id: uniqueId,
+              full_tank: fullTank,
+              fuel: Number(data.fuel),
+              brand: Number(data.brand),
+              name: data.name,
+              odometer: data.odometer,
+              quantity: `${calculateQuantity}`,
+              cost: `${calculateCost}`,
+              price: `${calculatePrice}`,
+            });
+            console.log(`created obj`, task1);
+          });
+        } catch (e) {
+          console.log('Erro aqui', e);
         }
-        if (!data.price) {
-          shape.price = Yup.string().required('Informe o preço por litro');
-        } else {
-          shape.price = Yup.number().typeError(
-            'O valor informado não é um número',
-          );
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          formRef.current?.setErrors(getValidationErrors(err));
         }
       }
-      const schema = Yup.object().shape(shape);
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        formRef.current?.setErrors(getValidationErrors(err));
-      }
-    }
-  }, []);
+    },
+    [fullTank],
+  );
 
   const handleClick = useCallback(() => {
     formRef?.current?.submitForm();
@@ -155,7 +188,7 @@ const Create: React.FC = () => {
           }}
         />
         <SwitchView>
-          <SwitchText>Tanque cheio: </SwitchText>
+          <SwitchText>Tanque cheio:</SwitchText>
           <Switch
             style={{transform: [{scaleX: 1.5}, {scaleY: 1.5}]}}
             trackColor={{false: colors.secondary, true: colors.secondary}}
