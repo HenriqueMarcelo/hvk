@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -49,14 +49,17 @@ const Home: React.FC = () => {
   const [odometer, setOdometer] = useState(0);
   const [average, setAverage] = useState<averageProps | null>(null);
   const navigation = useNavigation();
-  useEffect(() => {
-    const aux = async (): Promise<void> => {
-      const realm = await realmRegister;
-      const tasks = realm.objects('Register');
-      setRegisters(tasks);
-    };
-    aux();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const aux = async (): Promise<void> => {
+        const realm = await realmRegister;
+        const tasks = realm.objects('Register');
+        setRegisters(tasks);
+      };
+      aux();
+    }, []),
+  );
 
   const deleteRegister = useCallback(async id => {
     const realm = await realmRegister;

@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {FormHandles} from '@unform/core';
 import {Form} from '@unform/mobile';
 import React, {useCallback, useRef, useState} from 'react';
@@ -33,11 +34,6 @@ interface Errors {
   [key: string]: string;
 }
 
-interface CheckboxOption {
-  id: string;
-  value: string;
-  label: string;
-}
 export interface ObjectAny {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -61,8 +57,9 @@ const Create: React.FC = () => {
   const quantityInputRef = useRef<TextInput>(null);
   const costInputRef = useRef<TextInput>(null);
   const priceInputRef = useRef<TextInput>(null);
-
   const [fullTank, setFullTank] = useState(false);
+
+  const navigation = useNavigation();
 
   const handleSubmit = useCallback(
     async data => {
@@ -134,6 +131,7 @@ const Create: React.FC = () => {
             } as any);
             // eslint-disable-next-line no-console
             console.log(`created obj`, task1);
+            navigation.navigate('Home');
           });
         } catch (e) {
           // eslint-disable-next-line no-console
@@ -145,7 +143,7 @@ const Create: React.FC = () => {
         }
       }
     },
-    [fullTank],
+    [fullTank, navigation],
   );
 
   const handleClick = useCallback(() => {
