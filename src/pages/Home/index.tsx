@@ -25,13 +25,26 @@ import {
 } from './styles';
 
 type averageProps = {
-  firstDate: number;
-  secondDate: number;
+  firstDate: string;
+  secondDate: string;
   value: number;
   fuel: number;
 };
 
+export interface Abastecimento {
+  _id: string;
+  full_tank: boolean;
+  odometer: number;
+  quantity: number;
+  fuel: number;
+  price: number;
+  cost: number;
+  brand: number;
+  name: string;
+}
+
 const Home: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [registers, setRegisters] = useState<any>([]);
   const [odometer, setOdometer] = useState(0);
   const [average, setAverage] = useState<averageProps | null>(null);
@@ -54,6 +67,7 @@ const Home: React.FC = () => {
         setRegisters(tasks);
       });
     } else {
+      // eslint-disable-next-line no-console
       console.error('Not find register id');
     }
   }, []);
@@ -70,8 +84,8 @@ const Home: React.FC = () => {
 
     setOdometer(registersSorted[0]?.odometer || 0);
 
-    let current = {};
-    let previous = {};
+    let current = {} as Abastecimento;
+    let previous = {} as Abastecimento;
     for (const val of registersSorted) {
       previous = current;
       current = val;
@@ -91,7 +105,8 @@ const Home: React.FC = () => {
   }, [registers]);
 
   const timeToHuman = useCallback(
-    (time: number) => new Date(time).toLocaleDateString(),
+    (time: string) =>
+      new Date(Number(time)).toLocaleDateString('pt-BR', {timeZone: 'UTC'}),
     [],
   );
   return (
@@ -104,7 +119,7 @@ const Home: React.FC = () => {
           </BoxButton> */}
         </Box>
         <Box>
-          <BoxText>Combustível current: Gasolina Adtivada</BoxText>
+          <BoxText>Combustível Atual: Gasolina Adtivada</BoxText>
           {/* <BoxButton>
             <FontAwesome5 name="edit" size={14} color={colors.white} />
           </BoxButton> */}
@@ -115,7 +130,7 @@ const Home: React.FC = () => {
               Média de consumo com {fuels[average.fuel - 1].label}: {'\n'}
               <BoxTextSmall>
                 ({timeToHuman(average.firstDate)} até{' '}
-                {timeToHuman(average.firstDate)})
+                {timeToHuman(average.secondDate)})
               </BoxTextSmall>
             </BoxText>
             <BoxBoard>
@@ -135,7 +150,7 @@ const Home: React.FC = () => {
               <Th size="l">Combustível</Th>
               <TdBtn />
             </TableLine>
-            {registers.map((register: any, index: number) => (
+            {registers.map((register: Abastecimento, index: number) => (
               <TableLine
                 key={register._id}
                 last={registers.length - 1 === index}>
@@ -157,7 +172,7 @@ const Home: React.FC = () => {
                 </Td>
                 <Td size="l">{register.odometer}</Td>
                 <Td size="s">{register.fuel}</Td>
-                <Td size="s">{register.price}</Td>
+                <Td size="s">{Number(register.price).toFixed(2)}</Td>
                 <Td size="l">{fuels[register.fuel - 1].label}</Td>
                 <TdBtn>
                   {/* <SmallButton color={colors.warning}>

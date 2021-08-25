@@ -1,7 +1,7 @@
 import {FormHandles} from '@unform/core';
 import {Form} from '@unform/mobile';
 import React, {useCallback, useRef, useState} from 'react';
-import {Switch, TextInput, View} from 'react-native';
+import {Switch, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import * as Yup from 'yup';
@@ -38,6 +38,10 @@ interface CheckboxOption {
   value: string;
   label: string;
 }
+export interface ObjectAny {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
 
 export const getValidationErrors = (err: Yup.ValidationError): Errors => {
   const validationErrors: Errors = {};
@@ -51,10 +55,6 @@ export const getValidationErrors = (err: Yup.ValidationError): Errors => {
   return validationErrors;
 };
 
-const checkboxOptions: CheckboxOption[] = [
-  {id: 'is_active', value: 'is_active', label: 'Ativo'},
-];
-
 const Create: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const odometerInputRef = useRef<TextInput>(null);
@@ -67,7 +67,7 @@ const Create: React.FC = () => {
   const handleSubmit = useCallback(
     async data => {
       try {
-        const shape: any = {
+        const shape: ObjectAny = {
           fuel: Yup.string().required('Informe o combustível'),
           odometer: Yup.string().required('Informe o valor do hodômetro'),
         };
@@ -107,7 +107,7 @@ const Create: React.FC = () => {
           abortEarly: false,
         });
         const realm = await realmRegister;
-        let task1: any;
+        let task1: ObjectAny;
         const calculateQuantity = data.quantity
           ? data.quantity
           : data.cost / data.price;
@@ -130,10 +130,13 @@ const Create: React.FC = () => {
               quantity: `${calculateQuantity}`,
               cost: `${calculateCost}`,
               price: `${calculatePrice}`,
-            });
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
+            // eslint-disable-next-line no-console
             console.log(`created obj`, task1);
           });
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.log('Erro aqui', e);
         }
       } catch (err) {
