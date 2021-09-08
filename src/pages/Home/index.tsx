@@ -5,6 +5,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import SplashScreen from 'react-native-splash-screen';
 import Container from '../../components/Container';
 import {realmRegister} from '../../services/RealmService';
 import {colors} from '../../styles/colors';
@@ -49,6 +50,10 @@ const Home: React.FC = () => {
   const [odometer, setOdometer] = useState(0);
   const [average, setAverage] = useState<averageProps | null>(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
